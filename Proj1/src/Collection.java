@@ -1,3 +1,7 @@
+/*
+sdf;klajsdfkljasdfkl;ajsdfdhjsf
+@author David Halim, Stephen Juan
+*/
 public class Collection
 {
     private Album[] albums;
@@ -37,8 +41,20 @@ public class Collection
         this.albums = albums;
     }
     
+    /**
+    Adds an album to the collection.
+    returns false if the album already exists in the collection.
+    @param album to add to the collection
+    @return true if the add is successful, 
+            false if the album already exists in the collection
+     */
     public boolean add(Album album)
     {
+        int albumIndex = find(album);
+        
+        if (albumIndex != -1)
+            return false;
+        
         if (numAlbums >= albums.length)
             grow();
         
@@ -54,8 +70,12 @@ public class Collection
         if (albumIndex == -1)
             return false;
         
-        albums[albumIndex] = albums[numAlbums - 1];
-        albums[numAlbums - 1] = null;
+        for (int i = albumIndex; i < numAlbums; i++)
+        {
+            albums[i] = albums[i + 1];
+        }
+        
+        numAlbums = numAlbums - 1;
         return true;
     }
     
@@ -83,10 +103,14 @@ public class Collection
     
     public void print()
     {
+        System.out.println("*List of albums in the collection.");
+        
         for (int i = 0; i < albums.length; i++)
         {
             System.out.println(albums);
         }
+        
+        System.out.println("*End of list");
     }
     
     private void mergeByReleaseDate(int first, int middlePoint, int last)
@@ -205,11 +229,29 @@ public class Collection
     
     public void printByReleaseDate()
     {
+        sort(0, numAlbums - 1, 0);
         
+        System.out.println("*Album collection by the release dates.");
+        
+        for (int i = 0; i < albums.length; i++)
+        {
+            System.out.println(albums);
+        }
+        
+        System.out.println("*End of list");
     }
     
     public void printByGenre()
     {
+        sort(0, numAlbums - 1, 1);
         
+        System.out.println("*Album collection by genre.");
+        
+        for (int i = 0; i < albums.length; i++)
+        {
+            System.out.println(albums);
+        }
+        
+        System.out.println("*End of list");
     }
 }
