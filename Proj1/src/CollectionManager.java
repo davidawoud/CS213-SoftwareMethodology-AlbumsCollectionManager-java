@@ -9,6 +9,9 @@ import java.util.StringTokenizer;
 
 public class CollectionManager
 {
+	private int numberOfTokens;
+	private boolean contentInCollection = false; 
+	
 	/**
 	This method creates a new collection and repeatedly takes input with a while loop via Java Scanner and
 	uses methods from other classes to add, delete, lend or return them. It also checks to see that the 
@@ -20,33 +23,50 @@ public class CollectionManager
 
         Collection collection = new Collection();  
         Scanner keyboard = new Scanner(System.in);
-        String userInput = keyboard.nextLine(); 
-        String[] command = new String(5); 
-        command = albumTokenizer(userInput); 
-
+      
         // loop that repeatly takes in inputs until Q is entered as a command
-        while (keyboard.hasNext() && !command[0].equals("Q"))
+        while (keyboard.hasNext())
         {
-			// case for invalid date (ignores empty date)
-            Date date = new Date(command[4]);
-            if (command[4] != "" && !date.isValid()) 
-            { 
-                System.out.println("Invalid date!"); 
-                continue; 
-            }
+            String userInput = keyboard.nextLine(); 
+            String[] command = albumTokenizer(userInput); 
 			// case for invalid format/wrong number of tokens
             if (command == null) 
             { 
                 System.out.println("Invalid command!"); 
-                continue; 
             } 
-
-            Album album = new Album();
-            album = albumProcessor(command);
-            // does the commands
-            switchCommand(command[0], album, collection);
-            userInput = keyboard.nextLine();
-            command = albumTokenizer(userInput); 
+            else
+            {
+            	// case for invalid date (ignores empty date)
+            	if (numberOfTokens == 1) 
+            	{
+            		if (!contentInCollection)
+            		{
+            			System.out.println("Invalid Command!");
+            		}
+            	}
+            	else if (numberOfTokens == 3)
+            	{
+            		Album album = new Album();
+                    album = albumProcessor(command);
+                    // does the commands
+                    switchCommand(command[0], album, collection);
+            	}
+            	else // number of tokens == 5
+            	{
+            		Date date = new Date(command[4]);
+                    if (!date.isValid()) 
+                    { 
+                        System.out.println("Invalid date!"); 
+                    }
+                    else
+                    {
+                    	Album album = new Album();
+                    	album = albumProcessor(command);
+                    	// does the commands
+                    	switchCommand(command[0], album, collection);
+                    }
+            	}
+            }
         }
     }
 
@@ -61,21 +81,15 @@ public class CollectionManager
     {
         StringTokenizer inputString = new StringTokenizer(input,",");
 
-        int numberOfTokens = inputString.countTokens(); 
-		
+        numberOfTokens = inputString.countTokens(); 
+        
         // return null for invalid command
-        if (numberOfTokens != 3 || numberOfTokens != 5) 
+        if (numberOfTokens != 3 && numberOfTokens != 5 && numberOfTokens != 1 && numberOfTokens > 5) 
         { 
             return null; 
         }
 
-        String[] arrayOfTokens = new String[5];
-
-        // sets everything to empty string
-        for (int i= 0; i < arrayOfTokens.length; i++)
-        {	
-            arrayOfTokens[i] = "";
-        }
+        String[] arrayOfTokens = new String[numberOfTokens];
 
         // fills in applicable values and counter the number of tokens
         for (int i = 0; i < numberOfTokens; i++) 
@@ -94,37 +108,35 @@ public class CollectionManager
     */
     public Album albumProcessor(String[] inputArray)
     {
+    	Album album;
+    	
         // creates Genre object and set it to the corresponding value in the enum class
-        String genreString = inputArray[3];
-        Genre genre = new Genre(); 
-        if (genreString.equalsIgnoreCase("CLASSICAL")) 
-        { 
-            genre = Genre.Classical; 
+        if (inputArray.length <= 3)
+        {
+            String title = inputArray[1];
+            String artist = inputArray[2]; 
+            album = new Album(title,artist, Genre.Unknown, "01/01/1980");
         }
-        else if (genreString.equalsIgnoreCase("COUNTRY"))   
-        { 
-            genre = Genre.Country;   
+        else
+        {
+            String genreString = inputArray[3];
+        	Genre genre;
+            try
+            {
+                genre = Genre.valueOf(genreString);
+            }
+            catch(Exception e)
+            {
+                genre = Genre.Unknown;
+            }
+            // create album object with correct attributes
+            String title = inputArray[1];
+            String artist = inputArray[2]; 
+            String date = inputArray[4]; 
+            // this one may be bad if Album constructor does not have genre as Genre class
+            album = new Album(title, artist, genre, date);
         }
-        else if (genreString.equalsIgnoreCase("JAZZ"))      
-        { 
-            genre = Genre.Jazz;      
-        }
-        else if (genreString.equalsIgnoreCase("POP"))       
-        { 
-            genre = Genre.Pop;       
-        }
-        else                                                
-        { 
-            genre = Genre.Unknown;   
-        }
-
-        // create album object with correct attributes
-        String title = inputArray[1];
-        String artist = inputArray[2]; 
-        String date = inputArray[3]; 
-        // this one may be bad if Album constructor does not have genre as Genre class
-        Album album = new Albumn(title, artist, genre, date);
-
+        
         return album;
     }
 
@@ -143,6 +155,7 @@ public class CollectionManager
         {
             if (collection.add(album))
             {
+            	contentInCollection = true; 
                 System.out.println(album.toString() + " >> is added."); 
             }
             else
@@ -201,6 +214,12 @@ public class CollectionManager
         else if (command.equals("PG"))
         {	
             collection.printByGenre(); 
+        }
+        // Quits the program
+        else if (command.equals("Q"))
+        {
+            System.out.println("Collection Manager terminated.");
+            System.exit(0);
         }
         // if the command is not on the commandlist, print invalid
         else

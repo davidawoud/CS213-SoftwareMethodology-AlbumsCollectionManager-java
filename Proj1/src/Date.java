@@ -82,6 +82,7 @@ public class Date implements Comparable<Date>
 
         if (!isValid_NegativeOr1980(day, month, year))
         {
+        	//System.out.println("hi");
             return false;
         }
         if (!isValid_futureDate(day, month, year))
@@ -200,7 +201,7 @@ public class Date implements Comparable<Date>
             { 
                 return true;  
             }
-            else if (day == 28 && !isLeapYear) 
+            else if (day == 29 && !isLeapYear) 
             { 
                 return false; 
             }
@@ -261,6 +262,12 @@ public class Date implements Comparable<Date>
             return -1;
         }
     } 
+    
+    @Override
+    public String toString()
+    {
+    	return "" + month + "/" + day + "/" + year;
+    }
 	
     /**
     This method is a testbed main used to test the isValid() method using a wide range of test dates

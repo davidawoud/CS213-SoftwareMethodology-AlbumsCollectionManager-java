@@ -24,10 +24,21 @@ public class Album
     @Override
     public boolean equals(Object obj)
     {
-        if (this.title.equals(obj.title) && this.artist.equals(obj.artist))
+        Album albumIn = (Album) obj;
+        String title = this.title;
+        String artist = this.artist; 
+        //System.out.println("thistitle: " + title); 
+        //System.out.println("thisartist: " + artist);
+        //System.out.println("albumin title: " + albumIn.title);
+        //System.out.println("albumin artist: " + albumIn.artist);
+        if (title.equals(albumIn.title) && artist.equals(albumIn.artist))
+        { 
             return true;
+        }
         else
+        {
             return false;
+        }
     }
     
     private String isAvailableString()
@@ -58,5 +69,10 @@ public class Album
     public Genre getGenre()
     {
         return genre;
+    }
+    
+    public String getTitleArtist()
+    {
+        return title + "::" + artist;
     }
 }
