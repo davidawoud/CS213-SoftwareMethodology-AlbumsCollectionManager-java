@@ -9,28 +9,27 @@ import java.util.StringTokenizer;
 
 public class CollectionManager
 {
-	private int numberOfTokens;
-	private boolean contentInCollection = false; 
-	
-	/**
-	This method creates a new collection and repeatedly takes input with a while loop via Java Scanner and
-	uses methods from other classes to add, delete, lend or return them. It also checks to see that the 
-	input is in the correct format. 
-	*/
+    private int numberOfTokens;
+    
+    /**
+    This method creates a new collection and repeatedly takes input with a while loop via Java Scanner and
+    uses methods from other classes to add, delete, lend or return them. It also checks to see that the 
+    input is in the correct format. 
+    */
     public void run()
     {
-        System.out.println("Collection Manager starts running."); 
-
-        Collection collection = new Collection();  
+        System.out.println("Collection Manager starts running.");
+        
+        Collection collection = new Collection();
         Scanner keyboard = new Scanner(System.in);
-      
+        
         // loop that repeatly takes in inputs until Q is entered as a command
         while (keyboard.hasNext())
         {
-            String userInput = keyboard.nextLine(); 
-            String[] command = albumTokenizer(userInput); 
+            String userInput = keyboard.nextLine();
+            String[] command = albumTokenizer(userInput);
             
-        	whileLoopContent(command, collection); 
+            whileLoopContent(command, collection);
         }
     }
     
@@ -43,58 +42,46 @@ public class CollectionManager
     */
     private void whileLoopContent(String[] command, Collection collection)
     {
-    	if (command == null) 
+        if (command == null) 
         { 
             System.out.println("Invalid command!"); 
         } 
         else
         {
-        	// case for invalid date (ignores empty date)
-        	if (numberOfTokens == 1) 
-        	{
-        		if (collection.numberOfAlbums() == 0 && (command[0].equals("P") || command[0].equals("PG") || command[0].equals("PD")))
-        		{
-        			System.out.println("The collection is empty!");
-        		}
-        		else if (!contentInCollection)
-        		{
-        			System.out.println("Invalid command!");
-        		}
-        		else
-        		{
-        			Album album = new Album();
-        			switchCommand(command[0], album, collection);
-        		}
-        	}
-        	else if (numberOfTokens == 3)
-        	{
-        		Album album = new Album();
-                album = albumProcessor(command);
+            // case for invalid date (ignores empty date)
+            if (numberOfTokens == 1) 
+            {
+                Album album = new Album();
+                switchCommand(command[0], album, collection);
+            }
+            
+            else if (numberOfTokens == 3)
+            {
+                Album album = albumProcessor(command);
                 // does the commands
                 switchCommand(command[0], album, collection);
-        	}
-        	else if (numberOfTokens == 5)
-        	{
-        		Date date = new Date(command[4]);
+            }
+            else if (numberOfTokens == 5)
+            {
+                Date date = new Date(command[4]);
                 if (!date.isValid()) 
                 { 
                     System.out.println("Invalid Date!"); 
                 }
                 else
                 {
-                	Album album = new Album();
-                	album = albumProcessor(command);
-                	// does the commands
-                	switchCommand(command[0], album, collection);
+                    Album album = albumProcessor(command);
+                    // does the commands
+                    switchCommand(command[0], album, collection);
                 }
-        	}
-        	else
-        	{
-        		System.out.println("Invalid Command!");
-        	}
+            }
+            else
+            {
+                System.out.println("Invalid Command!");
+            }
         }
     }
-
+    
     /**
     This method splits up the user input as a string into separate tokens that represents command, title,
     artist, genre and date or title and artist. If there is only three tokens, it fill the rest of the array
@@ -105,7 +92,7 @@ public class CollectionManager
     public String[] albumTokenizer(String input)
     {
         StringTokenizer inputString = new StringTokenizer(input,",");
-
+        
         numberOfTokens = inputString.countTokens(); 
         
         // return null for invalid command
@@ -113,18 +100,18 @@ public class CollectionManager
         { 
             return null; 
         }
-
+        
         String[] arrayOfTokens = new String[numberOfTokens];
-
+        
         // fills in applicable values and counter the number of tokens
         for (int i = 0; i < numberOfTokens; i++) 
         {
             arrayOfTokens[i] = inputString.nextToken(); 
         }
-
+        
         return arrayOfTokens;
     }
-
+    
     /**
     This method creates an Album object using the array of Strings in albumTokenizer method. It returns
     the Album object.
@@ -133,10 +120,10 @@ public class CollectionManager
     */
     public Album albumProcessor(String[] inputArray)
     {
-    	Album album;
-    	
+        Album album;
+        
         // creates Genre object and set it to the corresponding value in the enum class
-        if (inputArray.length <= 3)
+        if (inputArray.length == 3)
         {
             String title = inputArray[1];
             String artist = inputArray[2]; 
@@ -145,32 +132,32 @@ public class CollectionManager
         else
         {
             String genreString = inputArray[3];
-        	Genre genre;
-    		if (genreString.equalsIgnoreCase("CLASSICAL"))
-    		{ 
-    			genre = Genre.Classical; 
-    		}
-    		else if (genreString.equalsIgnoreCase("COUNTRY"))   
-    		{ 
-    			genre = Genre.Country;   
-    		}
-    		else if (genreString.equalsIgnoreCase("JAZZ"))      
-    		{ 
-    			genre = Genre.Jazz;      
-    		}
-    		else if (genreString.equalsIgnoreCase("POP"))       
-    		{ 
-    			genre = Genre.Pop;       
-    		}
-    		else                                                
-    		{ 
-    			genre = Genre.Unknown;   
-    		}
+            Genre genre;
+            if (genreString.equalsIgnoreCase("CLASSICAL"))
+            { 
+                genre = Genre.Classical;
+            }
+            else if (genreString.equalsIgnoreCase("COUNTRY"))
+            { 
+                genre = Genre.Country;
+            }
+            else if (genreString.equalsIgnoreCase("JAZZ"))
+            { 
+                genre = Genre.Jazz;
+            }
+            else if (genreString.equalsIgnoreCase("POP"))
+            { 
+                genre = Genre.Pop;
+            }
+            else
+            { 
+                genre = Genre.Unknown;   
+            }
             // create album object with correct attributes
             String title = inputArray[1];
             String artist = inputArray[2]; 
             String date = inputArray[4]; 
-
+            
             album = new Album(title, artist, genre, date);
         }
         
@@ -191,8 +178,7 @@ public class CollectionManager
         if (command.equals("A"))
         {
             if (collection.add(album))
-            {
-            	contentInCollection = true; 
+            { 
                 System.out.println(album.toString() + " >> added."); 
             }
             else

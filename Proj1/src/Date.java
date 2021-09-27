@@ -8,18 +8,18 @@ date
 import java.util.Calendar; 
 
 public class Date implements Comparable<Date>
-{	
+{
     private int year;
     private int month;
     private int day;
-        
+    
     public static final int NORMAL_YEAR_FEB = 28;
     public static final int LEAP_YEAR_FEB = 29;
     public static final int THIRTY_DAY_MONTH = 30;
     public static final int THIRTY_ONE_DAY_MONTH = 31;
     public static final int NUMBER_MONTHS = 12;
     public static final int THE_EIGHTYS = 1980;
-
+    
     /**
     This is a constructor for the Date class that accepts a date as a string and gives values
     for the month, day and year from that string.
@@ -30,7 +30,7 @@ public class Date implements Comparable<Date>
         String[] date = new String[3]; 
         for (int i = 0; i < date.length; i++)
         {
-            date[i] = "";		
+            date[i] = "";
         }
         int stringCounter = 0; 
         for (int i = 0; i < Date.length(); i++)
@@ -66,23 +66,23 @@ public class Date implements Comparable<Date>
     {
         this.month = date.month;
         this.day = date.day;
-        this.year = date.year; 
+        this.year = date.year;
     }
-
-	/**
-	This method checks if the date is a valid date in a calendar, utilizing some private classes 
-	for in-depth checks. It returns true if i the date is valid and false if the date is invalid.
+    
+    /**
+    This method checks if the date is a valid date in a calendar, utilizing some private classes 
+    for in-depth checks. It returns true if i the date is valid and false if the date is invalid.
     @return true for a valid date, false for an invalid date
     */
     public boolean isValid() 
     {
         int day = this.day; 
         int month = this.month;
-        int year = this.year;	
-
+        int year = this.year;
+        
         if (!isValid_NegativeOr1980(day, month, year))
         {
-        	//System.out.println("hi");
+            //System.out.println("hi");
             return false;
         }
         if (!isValid_futureDate(day, month, year))
@@ -93,10 +93,10 @@ public class Date implements Comparable<Date>
         {
             return false; 
         }
-
+        
         return true;
     }
-	
+    
     /**
     This method checks for a negative day or month, a month with a number over 12 and if the year is 
     below 1980. It returns false for a negative date or month, a month over 12 or a year below 1980. 
@@ -107,23 +107,23 @@ public class Date implements Comparable<Date>
     */
     private boolean isValid_NegativeOr1980(int day, int month, int year)
     {
-        if (day < 1) 
+        if (day < 1)
         {
-            return false; 
+            return false;
         }
-
-        if (month < 1 || month > NUMBER_MONTHS) 
+        
+        if (month < 1 || month > NUMBER_MONTHS)
         { 
-            return false; 
+            return false;
         } 
-
-        if (year < THE_EIGHTYS) 
+        
+        if (year < THE_EIGHTYS)
         { 
-            return false; 
+            return false;
         }
         return true; 
     }
-	
+    
     /**
     This method checks if a date is a future date and returns false if it is in the future
     @param day   - day to be compared to todays date
@@ -134,22 +134,22 @@ public class Date implements Comparable<Date>
     private boolean isValid_futureDate(int day, int month, int year)
     {
         Date todaysDate = new Date();
-        Date comparedDate = new Date("" + month + "/" + day + "/" + year); 
-		
+        Date comparedDate = new Date("" + month + "/" + day + "/" + year);
+        
         int result = comparedDate.compareTo(todaysDate);
         // if compareDate is future == 1
         // if compareDate is same == 0
         // if compareDate is before == -1
-        if (result == -1 || result == 0) 
-        { 
-            return true; 
+        if (result == -1 || result == 0)
+        {
+            return true;
         }
         else 
         { 
             return false;
         }
     }
-
+    
     /**
     This method checks if the month has 30/21 days, the days are not over 30/31 days. In the case of 
     February, which has 28 or 29 days, it checks if the current year is a leap year and uses that
@@ -186,33 +186,33 @@ public class Date implements Comparable<Date>
             {
                 if ((year %= 100) == 0)
                 {
-                    if ((year %= 400) == 0) 
-                    { 
-                    	isLeapYear = true; 
+                    if ((year %= 400) == 0)
+                    {
+                    	isLeapYear = true;
                     }
                 }
-                else 
-                { 
-                	isLeapYear = true; 
-                } 
+                else
+                {
+                	isLeapYear = true;
+                }
             }
-
-            if (day == 29 && isLeapYear) 
-            { 
-                return true;  
+            
+            if (day == 29 && isLeapYear)
+            {
+                return true;
             }
-            else if (day == 29 && !isLeapYear) 
-            { 
-                return false; 
+            else if (day == 29 && !isLeapYear)
+            {
+                return false;
             }
-            else if (day > 28) 
-            { 
-                return false; 
+            else if (day > 28)
+            {
+                return false;
             }
         }
-        return true; 
+        return true;
     }
-	
+    
     /**
     This method compares a current Date object to another Date object. It returns 1 is the current Date object 
     is more, 0 if it is equal and -1 if it is before. 
@@ -249,7 +249,7 @@ public class Date implements Comparable<Date>
                 }
                 else
                 {
-                    return -1;	
+                    return -1;
                 }
             }
             else
@@ -266,9 +266,9 @@ public class Date implements Comparable<Date>
     @Override
     public String toString()
     {
-    	return "" + month + "/" + day + "/" + year;
+        return "" + month + "/" + day + "/" + year;
     }
-	
+    
     /**
     This method is a testbed main used to test the isValid() method using a wide range of test dates
     @param args - string used as input
@@ -279,40 +279,40 @@ public class Date implements Comparable<Date>
         Date dateTest1 = new Date("1/1/1979");
         boolean result = dateTest1.isValid();
         System.out.println("1/1/1979: " + result);
- 		
+        
         // valid
         Date dateTest2 = new Date("11/23/1990");
-        result = dateTest2.isValid() ? true : false; 
-        System.out.println("11/23/1990: " + result); 
-
+        result = dateTest2.isValid() ? true : false;
+        System.out.println("11/23/1990: " + result);
+        
         // invalid because there are >= 31 days in August
         Date dateTest3 = new Date("8/90/2000");
         result = dateTest3.isValid(); 
-        System.out.println("8/90/2000: " + result); 
-
+        System.out.println("8/90/2000: " + result);
+        
         // invalid because it is a future date
         Date dateTest4 = new Date("12/2/2022"); 
         result = dateTest4.isValid(); 
-        System.out.println("12/2/2022: " + result); 
+        System.out.println("12/2/2022: " + result);
         
         // invalid because it is not a leap year
-        Date dateTest5 = new Date("2/29/2021"); 
-        result = dateTest5.isValid(); 
-        System.out.println("2/29/2021: " + result); 
-
+        Date dateTest5 = new Date("2/29/2021");
+        result = dateTest5.isValid();
+        System.out.println("2/29/2021: " + result);
+        
         // valid because it is a leap year
-        Date dateTest6 = new Date("2/29/2020"); 
+        Date dateTest6 = new Date("2/29/2020");
         result = dateTest6.isValid();
-        System.out.println("2/29/2020: " + result); 
-
+        System.out.println("2/29/2020: " + result);
+        
         // invalid because there is no month after December
-        Date dateTest7 = new Date("13/6/2002"); 
-        result = dateTest7.isValid(); 
-        System.out.println("13/6/2002: " + result); 
-		
+        Date dateTest7 = new Date("13/6/2002");
+        result = dateTest7.isValid();
+        System.out.println("13/6/2002: " + result);
+        
         // valid [THIS IS THE CURRENT DATE]
-        Date dateTest8 = new Date(); 
-        result = dateTest8.isValid(); 
-        System.out.println("CURRENT DATE: " + result); 
+        Date dateTest8 = new Date();
+        result = dateTest8.isValid();
+        System.out.println("CURRENT DATE: " + result);
     }
 }
