@@ -24,7 +24,8 @@ public class Album
     @Override
     public boolean equals(Object obj)
     {
-        if (this.title.equals(obj.title) && this.artist.equals(obj.artist))
+        Album albumIn = (Album) obj;
+        if (this.title.equals(albumIn.title) && this.artist.equals(albumIn.artist))
             return true;
         else
             return false;
@@ -50,6 +51,11 @@ public class Album
         this.isAvailable = isAvailable;
     }
     
+    public boolean getIsAvailable()
+    {
+        return isAvailable;
+    }
+    
     public Date getReleaseDate()
     {
         return new Date (releaseDate);
@@ -58,5 +64,10 @@ public class Album
     public Genre getGenre()
     {
         return genre;
+    }
+    
+    public String getTitleArtist()
+    {
+        return title + "::" + artist;
     }
 }

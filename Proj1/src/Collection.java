@@ -1,26 +1,44 @@
-/*
-sdf;klajsdfkljasdfkl;ajsdfdhjsf
+/**
+Container class defines the array list data structure to hold the album collection.
 @author David Halim, Stephen Juan
 */
 public class Collection
 {
-    private Album[] albums;
+    private static final int DEFAULT_SIZE = 10;
+	private Album[] albums;
     private int numAlbums; //number of albums currently in the collection
     
+    /**
+    Default constructor initializes size of albums array to DEFAULT_SIZE.
+    DEFAULT_SIZE is a static final int = 10.
+    Calls the Overloaded constructor passing the value DEFAULT_SIZE.
+    Initializes numAlbums = 0 (empty collection).
+    */
     public Collection()
     {
-        this(10);
+        this(DEFAULT_SIZE);
     }
     
+    /**
+    Overloaded constructor initializes size of albums array and numAlbums.
+    Initializes size of albums array to an accepted value albumsSize.
+    Initializes numAlbums = 0 (empty collection).
+    @param albumsSize accepted value for size of albums array.
+    */
     public Collection(int albumsSize)
     {
         albums = new Album[albumsSize];
         numAlbums = 0;
     }
     
+    /**
+    find the album index, or return (-1) NOT_FOUND.
+    @param album to be found.
+    @return index if found, returns -1 otherwise. 
+    */
     private int find(Album album)
     {
-        for (int i = 0; i < albums.length; i++)
+        for (int i = 0; i < numAlbums; i++)
         {
             if (album.equals(albums[i]))
                 return i;
@@ -29,9 +47,13 @@ public class Collection
         return -1;
     }
     
+    /**
+    increase the capacity of the array list by 4
+    */
     private void grow()
     {
-        Album[] albums = new Album[this.albums.length + 4];
+        int growValue = 4;
+    	Album[] albums = new Album[this.albums.length + growValue];
         
         for (int i = 0; i < this.albums.length; i++)
         {
@@ -43,10 +65,11 @@ public class Collection
     
     /**
     Adds an album to the collection.
-    returns false if the album already exists in the collection.
+    Calls find(album) to make sure the new does not
+    exist in the array to eliminate duplicates.
     @param album to add to the collection
     @return true if the add is successful, 
-            false if the album already exists in the collection
+            false if the album already exists in the collection.
      */
     public boolean add(Album album)
     {
@@ -63,6 +86,15 @@ public class Collection
         return true;
     }
     
+    /**
+    Removes an album from the collection.
+    Calls find(album) to get the index to remove.
+    Maintains the current sequence of albums
+    in the array after the deletion.
+    @param album to remove from the collection.
+    @return true if the remove is successful,
+            false if the album does not exist in the class.
+    */
     public boolean remove(Album album)
     {
         int albumIndex = find(album);
@@ -70,15 +102,23 @@ public class Collection
         if (albumIndex == -1)
             return false;
         
-        for (int i = albumIndex; i < numAlbums; i++)
+        for (int i = albumIndex; i < numAlbums - 1; i++)
         {
             albums[i] = albums[i + 1];
         }
+        
+        albums[numAlbums - 1] = null;
         
         numAlbums = numAlbums - 1;
         return true;
     }
     
+    /**
+    Sets an album in the collection to not available.
+    @param album to set to not available.
+    @return true if the lendingOut is successful,
+            false if the album does not exist in the class.
+    */
     public boolean lendingOut(Album album)
     {
         int albumIndex = find(album);
@@ -86,10 +126,19 @@ public class Collection
         if (albumIndex == -1)
             return false;
         
+        if(! albums[albumIndex].getIsAvailable())
+            return false;
+        
         albums[albumIndex].setIsAvailable(false);
         return true;
     }
     
+    /**
+    Sets an album in the collection to available.
+    @param album to set to available.
+    @return true if the returnAlbum is successful,
+            false if the album does not exist in the class.
+    */
     public boolean returnAlbum(Album album)
     {
         int albumIndex = find(album);
@@ -97,17 +146,29 @@ public class Collection
         if (albumIndex == -1)
             return false;
         
+        if(albums[albumIndex].getIsAvailable())
+            return false;
+        
         albums[albumIndex].setIsAvailable(true);
         return true;
     }
     
+    /**
+    Prints out the list without specifying the order.
+    */
     public void print()
     {
+        if (numAlbums == 0)
+        {
+            System.out.println("The collection is empty!");
+            return;
+        }
+        
         System.out.println("*List of albums in the collection.");
         
-        for (int i = 0; i < albums.length; i++)
+        for (int i = 0; i < numAlbums; i++)
         {
-            System.out.println(albums);
+            System.out.println(albums[i].toString());
         }
         
         System.out.println("*End of list");
@@ -133,7 +194,7 @@ public class Collection
         int i = 0, j = 0;
         int k = first;
         while (i < leftArraySize && j < rightArraySize) {
-            if (leftArray[i].getReleaseDate().compareto(rightArray[j].getReleaseDate()) <= 0)
+            if (leftArray[i].getReleaseDate().compareTo(rightArray[j].getReleaseDate()) <= 0)
             {
                 albums[k] = leftArray[i];
                 i++;
@@ -181,7 +242,7 @@ public class Collection
         int i = 0, j = 0;
         int k = first;
         while (i < leftArraySize && j < rightArraySize) {
-            if (leftArray[i].getGenre().compareto(rightArray[j].getGenre()) <= 0)
+            if (leftArray[i].getGenre().toString().compareTo(rightArray[j].getGenre().toString()) <= 0)
             {
                 albums[k] = leftArray[i];
                 i++;
@@ -213,7 +274,7 @@ public class Collection
     {
         if (first < last)
         {
-            int middlePoint = first + (last - l) / 2;
+            int middlePoint = first + (last - first) / 2;
             
             // Sort first and second halves
             sort(first, middlePoint, sortingType);
@@ -229,13 +290,19 @@ public class Collection
     
     public void printByReleaseDate()
     {
+        if (numAlbums == 0)
+        {
+            System.out.println("The collection is empty!");
+            return;
+        }
+        
         sort(0, numAlbums - 1, 0);
         
         System.out.println("*Album collection by the release dates.");
         
-        for (int i = 0; i < albums.length; i++)
+        for (int i = 0; i < numAlbums; i++)
         {
-            System.out.println(albums);
+            System.out.println(albums[i].toString());
         }
         
         System.out.println("*End of list");
@@ -243,13 +310,19 @@ public class Collection
     
     public void printByGenre()
     {
+        if (numAlbums == 0)
+        {
+            System.out.println("The collection is empty!");
+            return;
+        }
+        
         sort(0, numAlbums - 1, 1);
         
         System.out.println("*Album collection by genre.");
         
-        for (int i = 0; i < albums.length; i++)
+        for (int i = 0; i < numAlbums; i++)
         {
-            System.out.println(albums);
+            System.out.println(albums[i].toString());
         }
         
         System.out.println("*End of list");
