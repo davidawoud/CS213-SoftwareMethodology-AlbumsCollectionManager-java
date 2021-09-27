@@ -1,6 +1,6 @@
 /**
 Container class defines the array list data structure to hold the album collection.
-@author David Halim, Stephen Juan
+@author David Halim, Stephen Juan.
 */
 public class Collection
 {
@@ -174,6 +174,12 @@ public class Collection
         System.out.println("*End of list");
     }
     
+    /**
+    Merges 2 sublists and sort them in the order of ReleaseDate.
+    @param first - index of the first element of the right sublist to be merged
+    @param middlePoint - index of the last element of the right sublist to be merged
+    @param last- index of the last element of the left sublist to be merged
+    */
     private void mergeByReleaseDate(int first, int middlePoint, int last)
     {
         int leftArraySize = middlePoint - first + 1;
@@ -222,6 +228,12 @@ public class Collection
         }
     }
     
+    /**
+    Merges 2 sublists and sort them in the order of Genre.
+    @param first - index of the first element of the right sublist to be merged
+    @param middlePoint - index of the last element of the right sublist to be merged
+    @param last- index of the last element of the left sublist to be merged
+    */
     private void mergeByGenre(int first, int middlePoint, int last)
     {
         int leftArraySize = middlePoint - first + 1;
@@ -270,6 +282,16 @@ public class Collection
         }
     }
     
+    /**
+    Recursive sort method that sorts the list using merge sort.
+    Splits the every list/sublist into 2 halves until the lists reach size 1.
+    It merges in the order of ReleaseDate or Genre according to int sortingType.
+    @param first - index of the first element of the list/sublist to be sorted
+    @param last - index of the last element of the list/sublist to be sorted
+    @param sortingType represents the type of  merge sorting;
+           0 = mergeByReleaseDate
+           1 = mergeByGenre.
+    */
     private void sort(int first, int last, int sortingType)
     {
         if (first < last)
@@ -288,6 +310,9 @@ public class Collection
         }
     }
     
+    /**
+    Prints out the list in the order of ReleaseDate.
+    */
     public void printByReleaseDate()
     {
         if (numAlbums == 0)
@@ -308,6 +333,9 @@ public class Collection
         System.out.println("*End of list");
     }
     
+    /**
+    Prints out the list in the order of Genre.
+    */
     public void printByGenre()
     {
         if (numAlbums == 0)
