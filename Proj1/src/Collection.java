@@ -9,17 +9,6 @@ public class Collection
     private int numAlbums = 1; //number of albums currently in the collection
     
     /**
-    Default constructor initializes size of albums array to DEFAULT_SIZE.
-    DEFAULT_SIZE is a static final int = 10.
-    Calls the Overloaded constructor passing the value DEFAULT_SIZE.
-    Initializes numAlbums = 0 (empty collection).
-    */
-    /*public Collection()
-    {
-        this(DEFAULT_SIZE);
-    }*/
-    
-    /**
     Overloaded constructor initializes size of albums array and numAlbums.
     Initializes size of albums array to an accepted value albumsSize.
     Initializes numAlbums = 0 (empty collection).
@@ -28,7 +17,6 @@ public class Collection
     public Collection()
     {
         albums = new Album[numAlbums];
-        //numAlbums = 0;
     }
     
     /**
@@ -38,15 +26,19 @@ public class Collection
     */
     private int find(Album album)
     {
-        for (int i = 0; i < albums.length && albums[i] != null; i++)
+        for (int i = 0; i < albums.length; i++)
         {
+            if (albums[i] == null) 
+            { 
+                continue; 
+            }
             if (album.equals(albums[i]))
             {
-                return i;
+                return i; // return the index of the album if it exists in the collection
             }
         }
         
-        return -1;
+        return -1; // return -1 if the album does not exist in the collection
     }
     
     /**
@@ -55,18 +47,18 @@ public class Collection
     private void grow()
     {
         int growValue = 4;
-    	Album[] albums = new Album[this.albums.length + growValue];
+    	Album[] newAlbums = new Album[albums.length + growValue];
         
-        for (int i = 0; i < this.albums.length; i++)
+        for (int i = 0; i < albums.length; i++)
         {
-            albums[i] = this.albums[i];
+            newAlbums[i] = albums[i];
         }
-        for (int i = this.albums.length; i < albums.length; i++)
+        for (int i = albums.length; i < newAlbums.length; i++)
         {
-        	albums[i] = null; 
+        	newAlbums[i] = null; 
         }
         
-        this.albums = albums;
+        albums = newAlbums;
     }
     
     /**
@@ -79,19 +71,17 @@ public class Collection
      */
     public boolean add(Album album)
     {
-    	if (numAlbums == 1)
-    	{
-            albums[numAlbums-1] = album;
+        if (numAlbums == 0) // base case when first album is added to the collection albums.length = 1
+        {
+            albums[0] = album;
             numAlbums++;
             return true; 
-    	}
-    	else
-    	{
-    		//System.out.println("album length: " + albums.length);
-    		//System.out.println("num albums: " + numAlbums); 
-    		int albumIndex = find(album);
+        }
+        else
+        {
+    	    int albumIndex = find(album);
             
-            if (albumIndex != -1)
+            if (albumIndex != -1) // if the album is already in the collection
             {
                 return false;
             }
@@ -104,7 +94,7 @@ public class Collection
             albums[numAlbums] = album;
             numAlbums++;
             return true;
-    	}
+        }
     }
     
     /**
@@ -124,13 +114,15 @@ public class Collection
         {
             return false;
         }
-        // 
+        
+        albums[albumIndex] = null;
         for (int i = albumIndex; i < numAlbums; i++)
         {
-            albums[i] = albums[i + 1];
+            albums[i] = albums[i+1];
         }
-        
+       // albums[numAlbums+1] = null; 
         numAlbums--;
+        
         return true;
     }
     
@@ -144,8 +136,10 @@ public class Collection
     {
         int albumIndex = find(album);
         
-        if (albumIndex == -1)
+        if (albumIndex == -1 || !albums[albumIndex].isAvailableBoolean())
+        {
             return false;
+        }
         
         albums[albumIndex].setIsAvailable(false);
         return true;
@@ -161,8 +155,10 @@ public class Collection
     {
         int albumIndex = find(album);
         
-        if (albumIndex == -1)
+        if (albumIndex == -1 || albums[albumIndex].isAvailableBoolean())
+        {
             return false;
+        }
         
         albums[albumIndex].setIsAvailable(true);
         return true;
@@ -177,151 +173,158 @@ public class Collection
         
         for (int i = 0; i < albums.length; i++)
         {
-            System.out.println(albums);
+            if (albums[i] == null)
+            { 
+                continue; 
+            } 
+            System.out.println(albums[i].toString());
         }
         
         System.out.println("*End of list");
     }
     
-    private void mergeByReleaseDate(int first, int middlePoint, int last)
+    /**
+    This method uses selection sort to sort the album by its release date, from oldest to youngest. It leaves the album 
+    in a sorted form. 
+    */    
+    public void sortByReleaseDate()
     {
-        int leftArraySize = middlePoint - first + 1;
-        int rightArraySize = last - middlePoint;
-        
-        Album[] leftArray = new Album[leftArraySize];
-        Album[] rightArray = new Album[rightArraySize];
-  
-        /*Copy data to temp arrays*/
-        for (int i = 0; i < leftArraySize; ++i)
-            leftArray[i] = albums[first + i];
-        
-        for (int j = 0; j < rightArraySize; ++j)
-            rightArray[j] = albums[middlePoint + 1 + j];
-  
-        /* Merge the temp arrays */
-        
-        int i = 0, j = 0;
-        int k = first;
-        while (i < leftArraySize && j < rightArraySize) {
-            if (leftArray[i].getReleaseDate().compareTo(rightArray[j].getReleaseDate()) <= 0)
-            {
-                albums[k] = leftArray[i];
-                i++;
-            }
-            else
-            {
-            	albums[k] = rightArray[j];
-                j++;
-            }
-            k++;
-        }
-        
-        /* Copy remaining elements if any */
-        
-        while (i < leftArraySize) {
-        	albums[k] = leftArray[i];
-            i++;
-            k++;
-        }
-        
-        while (j < rightArraySize) {
-        	albums[k] = rightArray[j];
-            j++;
-            k++;
-        }
-    }
-    
-    private void mergeByGenre(int first, int middlePoint, int last)
-    {
-        int leftArraySize = middlePoint - first + 1;
-        int rightArraySize = last - middlePoint;
-        
-        Album[] leftArray = new Album[leftArraySize];
-        Album[] rightArray = new Album[rightArraySize];
-  
-        /*Copy data to temp arrays*/
-        for (int i = 0; i < leftArraySize; ++i)
-            leftArray[i] = albums[first + i];
-        
-        for (int j = 0; j < rightArraySize; ++j)
-            rightArray[j] = albums[middlePoint + 1 + j];
-  
-        /* Merge the temp arrays */
-        
-        int i = 0, j = 0;
-        int k = first;
-        while (i < leftArraySize && j < rightArraySize) {
-            if (leftArray[i].getGenre().toString().compareTo(rightArray[j].getGenre().toString()) <= 0)
-            {
-                albums[k] = leftArray[i];
-                i++;
-            }
-            else
-            {
-            	albums[k] = rightArray[j];
-                j++;
-            }
-            k++;
-        }
-        
-        /* Copy remaining elements if any */
-        
-        while (i < leftArraySize) {
-        	albums[k] = leftArray[i];
-            i++;
-            k++;
-        }
-        
-        while (j < rightArraySize) {
-        	albums[k] = rightArray[j];
-            j++;
-            k++;
-        }
-    }
-    
-    private void sort(int first, int last, int sortingType)
-    {
-        if (first < last)
+        // use selection sort
+        int indexOfSmallest = 0; 
+        for (int i = 0; i < albums.length; i++)
         {
-            int middlePoint = first + (last - first) / 2;
-            
-            // Sort first and second halves
-            sort(first, middlePoint, sortingType);
-            sort(middlePoint + 1, last, sortingType);
-            
-            // Merge the sorted halves
-            if (sortingType == 0)
-                mergeByReleaseDate(first, middlePoint, last);
-            else
-                mergeByGenre(first, middlePoint, last);
+            if (albums[i] == null) { continue; }
+            Album smallest = albums[i]; // we compare the first to everything else
+            for (int j = i; j < albums.length; j++)
+            {
+                if (albums[j] == null) 
+                { 
+                    continue; 
+                }
+                if (smallest.getReleaseDate().compareTo(albums[j].getReleaseDate()) == 1) // if albums[j] date is less than smallest
+                {
+                    // set smallest to album[j] and continue
+                    smallest = albums[j];
+                    indexOfSmallest = j; 
+                }
+            }
+            // swap smallest with album[i]
+            Album temp = new Album();
+            temp = albums[i];
+            albums[i] = albums[indexOfSmallest]; 
+            albums[indexOfSmallest] = temp; 
         }
     }
     
+    /**
+    This method calls the sortByReleaseDate method and prints out the contents of the collection. 
+    */
     public void printByReleaseDate()
     {
-        sort(0, numAlbums - 1, 0);
-        
         System.out.println("*Album collection by the release dates.");
+        
+        sortByReleaseDate(); 
         
         for (int i = 0; i < albums.length; i++)
         {
-            System.out.println(albums);
+            if (albums[i] == null) { continue; }
+            System.out.println(albums[i].toString());
         }
         
         System.out.println("*End of list");
     }
     
-    public void printByGenre()
-    {
-        sort(0, numAlbums - 1, 1);
-        
-        System.out.println("*Album collection by genre.");
-        
+    /**
+    This method finds all the instances of Classical, Country, Jazz, Pop and Unknown albums in the collection
+    and prints them out by genre, in that order mentioned above. 
+    */
+    public void sortByGenre()
+    {	
+        // search for classical Genre and put them in sortedAlbum
         for (int i = 0; i < albums.length; i++)
         {
-            System.out.println(albums);
+            if (albums[i] == null)
+            { 
+                continue; 
+            }
+            Genre currentGenre = albums[i].getGenre();
+            if (currentGenre.toString().contentEquals("Classical"))
+            {
+                System.out.println(albums[i].toString());
+            }
         }
+        // search for country Genre and put them in sortedAlbum
+        for (int i = 0; i < albums.length; i++)
+        {
+            if (albums[i] == null)
+            { 
+                continue; 
+            }
+    	    Genre currentGenre = albums[i].getGenre();
+    	    if (currentGenre.toString().contentEquals("Country"))
+    	    {
+        	    System.out.println(albums[i].toString());
+        	}
+    	}
+    	// search for jazz Genre and put them in sortedAlbum
+        for (int i = 0; i < albums.length; i++)
+        {
+            if (albums[i] == null)
+            { 
+                continue; 
+            }
+            Genre currentGenre = albums[i].getGenre();
+            if (currentGenre.toString().contentEquals("Jazz"))
+            {
+                System.out.println(albums[i].toString());
+            }
+        }
+    	// search for pop Genre and put them in sortedAlbum
+        for (int i = 0; i < albums.length; i++)
+        {
+            if (albums[i] == null)
+            { 
+                continue; 
+            }
+            Genre currentGenre = albums[i].getGenre();
+            if (currentGenre.toString().contentEquals("Pop"))
+            {
+                System.out.println(albums[i].toString());
+            }
+        }
+        // search for unknown Genre and put them in sortedAlbum
+        for (int i = 0; i < albums.length; i++)
+        {
+            if (albums[i] == null)
+            { 
+                continue; 
+            }
+            Genre currentGenre = albums[i].getGenre();
+            if (currentGenre.toString().contentEquals("Unknown"))
+            {
+                System.out.println(albums[i].toString());
+            }
+        }
+    }
+    
+    /**
+    This method calls sortByGenre, which, in turns, prints out the collection sorted by genre.
+    */
+    public void printByGenre()
+    {     
+        System.out.println("*Album collection by genre.");
+        
+        sortByGenre(); 
         
         System.out.println("*End of list");
+    }
+    
+    /**
+    This method returns the number of albums in the collection.
+    * @return numAlbums - 1 - actual number of Albums in the collection
+    */
+    public int numberOfAlbums()
+    {
+        return numAlbums - 1; 
     }
 }

@@ -29,44 +29,69 @@ public class CollectionManager
         {
             String userInput = keyboard.nextLine(); 
             String[] command = albumTokenizer(userInput); 
-			// case for invalid format/wrong number of tokens
-            if (command == null) 
-            { 
-                System.out.println("Invalid command!"); 
-            } 
-            else
-            {
-            	// case for invalid date (ignores empty date)
-            	if (numberOfTokens == 1) 
-            	{
-            		if (!contentInCollection)
-            		{
-            			System.out.println("Invalid Command!");
-            		}
-            	}
-            	else if (numberOfTokens == 3)
-            	{
-            		Album album = new Album();
-                    album = albumProcessor(command);
-                    // does the commands
-                    switchCommand(command[0], album, collection);
-            	}
-            	else // number of tokens == 5
-            	{
-            		Date date = new Date(command[4]);
-                    if (!date.isValid()) 
-                    { 
-                        System.out.println("Invalid date!"); 
-                    }
-                    else
-                    {
-                    	Album album = new Album();
-                    	album = albumProcessor(command);
-                    	// does the commands
-                    	switchCommand(command[0], album, collection);
-                    }
-            	}
-            }
+            
+        	whileLoopContent(command, collection); 
+        }
+    }
+    
+    /**
+    This is a segment of code that is supposed to be repeatedly called in the while loop. It checks for invalid commands,
+    calls the switchCommand method and calls the albumProcessor class to process the user input into tokens that
+    the program can read 
+    @param command    - this is an array of strings that contains the command, title, artist, genre and date
+    @param collection - this is the Collection that contains all the albums
+    */
+    private void whileLoopContent(String[] command, Collection collection)
+    {
+    	if (command == null) 
+        { 
+            System.out.println("Invalid command!"); 
+        } 
+        else
+        {
+        	// case for invalid date (ignores empty date)
+        	if (numberOfTokens == 1) 
+        	{
+        		if (collection.numberOfAlbums() == 0 && (command[0].equals("P") || command[0].equals("PG") || command[0].equals("PD")))
+        		{
+        			System.out.println("The collection is empty!");
+        		}
+        		else if (!contentInCollection)
+        		{
+        			System.out.println("Invalid command!");
+        		}
+        		else
+        		{
+        			Album album = new Album();
+        			switchCommand(command[0], album, collection);
+        		}
+        	}
+        	else if (numberOfTokens == 3)
+        	{
+        		Album album = new Album();
+                album = albumProcessor(command);
+                // does the commands
+                switchCommand(command[0], album, collection);
+        	}
+        	else if (numberOfTokens == 5)
+        	{
+        		Date date = new Date(command[4]);
+                if (!date.isValid()) 
+                { 
+                    System.out.println("Invalid Date!"); 
+                }
+                else
+                {
+                	Album album = new Album();
+                	album = albumProcessor(command);
+                	// does the commands
+                	switchCommand(command[0], album, collection);
+                }
+        	}
+        	else
+        	{
+        		System.out.println("Invalid Command!");
+        	}
         }
     }
 
@@ -121,19 +146,31 @@ public class CollectionManager
         {
             String genreString = inputArray[3];
         	Genre genre;
-            try
-            {
-                genre = Genre.valueOf(genreString);
-            }
-            catch(Exception e)
-            {
-                genre = Genre.Unknown;
-            }
+    		if (genreString.equalsIgnoreCase("CLASSICAL"))
+    		{ 
+    			genre = Genre.Classical; 
+    		}
+    		else if (genreString.equalsIgnoreCase("COUNTRY"))   
+    		{ 
+    			genre = Genre.Country;   
+    		}
+    		else if (genreString.equalsIgnoreCase("JAZZ"))      
+    		{ 
+    			genre = Genre.Jazz;      
+    		}
+    		else if (genreString.equalsIgnoreCase("POP"))       
+    		{ 
+    			genre = Genre.Pop;       
+    		}
+    		else                                                
+    		{ 
+    			genre = Genre.Unknown;   
+    		}
             // create album object with correct attributes
             String title = inputArray[1];
             String artist = inputArray[2]; 
             String date = inputArray[4]; 
-            // this one may be bad if Album constructor does not have genre as Genre class
+
             album = new Album(title, artist, genre, date);
         }
         
@@ -143,8 +180,8 @@ public class CollectionManager
     /**
     This method utilizes a command that is identified in the user input string and performs the 
     functions that the user requests. It prints out whether or not the requested action was able
-    to be performed.
-    @param command    - the command the user inputs - either A, D, L, R, P, PD, PG
+    to be performed. It terminates the entire program once the 'Q' is entered
+    @param command    - the command the user inputs - either A, D, L, R, P, PD, PG, Q
     @param album      - the album the user wants to modify in the collection
     @param collection - the collection the user wants to modify
     */
@@ -156,7 +193,7 @@ public class CollectionManager
             if (collection.add(album))
             {
             	contentInCollection = true; 
-                System.out.println(album.toString() + " >> is added."); 
+                System.out.println(album.toString() + " >> added."); 
             }
             else
             {
@@ -185,7 +222,7 @@ public class CollectionManager
             }
             else
             {
-                System.out.println(album.getTitleArtist() + " >> is not in the collection.");
+                System.out.println(album.getTitleArtist() + " >> is not available.");
             }
         }
         // returns the album if its is on a return list (T), otherwise prints that it cannot be completed (F)
@@ -212,7 +249,7 @@ public class CollectionManager
         }
         // prints entire collection, sorted by genre
         else if (command.equals("PG"))
-        {	
+        {	 
             collection.printByGenre(); 
         }
         // Quits the program

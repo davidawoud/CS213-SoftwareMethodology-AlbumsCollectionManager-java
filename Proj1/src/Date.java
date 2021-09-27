@@ -172,10 +172,10 @@ public class Date implements Comparable<Date>
         }
         // checks months with 30 days
         else if (month == 4 || month == 6 || month == 9 || month == 11) 
-        {
+        { 
             if (day > THIRTY_DAY_MONTH)
             {
-                return true; 
+                return false; 
             }
         }
 		// checks for february and leap years
